@@ -45,7 +45,6 @@ int handleFastMA;
 int handleSlowMA;
 double fastMA[], slowMA[];
 double point;
-int digits;
 double tickSize;
 double tickValue;
 double lotStep;
@@ -67,7 +66,6 @@ int OnInit()
    
    //--- Get symbol properties
    point = SymbolInfoDouble(_Symbol, SYMBOL_POINT);
-   digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
    tickSize = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
    tickValue = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
    lotStep = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_STEP);
@@ -239,8 +237,8 @@ void OpenBuyPosition(double price)
    double lots = CalculateLotSize(price, sl);
    
    //--- Normalize values
-   sl = NormalizeDouble(sl, digits);
-   tp = NormalizeDouble(tp, digits);
+   sl = NormalizeDouble(sl, _Digits);
+   tp = NormalizeDouble(tp, _Digits);
    lots = NormalizeLot(lots);
    
    //--- Validate lot size
@@ -272,8 +270,8 @@ void OpenSellPosition(double price)
    double lots = CalculateLotSize(price, sl);
    
    //--- Normalize values
-   sl = NormalizeDouble(sl, digits);
-   tp = NormalizeDouble(tp, digits);
+   sl = NormalizeDouble(sl, _Digits);
+   tp = NormalizeDouble(tp, _Digits);
    lots = NormalizeLot(lots);
    
    //--- Validate lot size
@@ -442,7 +440,7 @@ void ManagePositions()
          
          if(trailPrice > currentSL + trailStep || currentSL == 0)
          {
-            newSL = NormalizeDouble(trailPrice, digits);
+            newSL = NormalizeDouble(trailPrice, _Digits);
             
             if(newSL != currentSL && newSL > positionOpenPrice)
             {
@@ -459,7 +457,7 @@ void ManagePositions()
          
          if(trailPrice < currentSL - trailStep || currentSL == 0)
          {
-            newSL = NormalizeDouble(trailPrice, digits);
+            newSL = NormalizeDouble(trailPrice, _Digits);
             
             if(newSL != currentSL && newSL < positionOpenPrice)
             {
