@@ -241,6 +241,21 @@ double PipToPoint()
 }
 
 //+------------------------------------------------------------------+
+//| Helper: Get the appropriate filling mode for current symbol      |
+//+------------------------------------------------------------------+
+ENUM_ORDER_TYPE_FILLING GetFillingMode()
+{
+   int filling_mode = (int)SymbolInfoInteger(_Symbol, SYMBOL_FILLING_MODE);
+   
+   if((filling_mode & SYMBOL_FILLING_FOK) == SYMBOL_FILLING_FOK)
+      return ORDER_FILLING_FOK;
+   else if((filling_mode & SYMBOL_FILLING_IOC) == SYMBOL_FILLING_IOC)
+      return ORDER_FILLING_IOC;
+   
+   return ORDER_FILLING_RETURN;
+}
+
+//+------------------------------------------------------------------+
 //| Check general trading conditions                                 |
 //+------------------------------------------------------------------+
 bool CheckTradingConditions()
@@ -360,7 +375,7 @@ double CalculateLotSize()
    double pipValue = tickValue;
    if(tickSize > 0 && point > 0)
    {
-      pipValue = (tickValue / tickSize) * point * 10;  // Value of 1 pip for 1 lot
+      pipValue = (tickValue / tickSize) * point * PipToPoint();  // Value of 1 pip for 1 lot
    }
    
    double lotSize = 0.01;
@@ -408,13 +423,21 @@ void OpenBuyTrade()
    double ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
    double point = SymbolInfoDouble(_Symbol, SYMBOL_POINT);
    int digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
+   double pip = point * PipToPoint();
    
    //--- Calculate SL and TP
-   double sl = NormalizeDouble(ask - StopLossPips * 10 * point, digits);
-   double tp = NormalizeDouble(ask + TakeProfitPips * 10 * point, digits);
+   double sl = NormalizeDouble(ask - StopLossPips * pip, digits);
+   double tp = NormalizeDouble(ask + TakeProfitPips * pip, digits);
    
    //--- Calculate lot size
    double lot = CalculateLotSize();
+   
+   //--- Validate lot size
+   if(lot <= 0)
+   {
+      Print("BUY order cancelled: Invalid lot size calculated (", lot, ")");
+      return;
+   }
    
    //--- Prepare trade request
    MqlTradeRequest request = {};
@@ -430,7 +453,7 @@ void OpenBuyTrade()
    request.deviation = 10;
    request.magic = MagicNumber;
    request.comment = TradeComment;
-   request.type_filling = ORDER_FILLING_FOK;
+   request.type_filling = GetFillingMode();
    
    //--- Send order
    if(!OrderSend(request, result))
@@ -459,7 +482,7 @@ void OpenSellTrade()
    double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
    double point = SymbolInfoDouble(_Symbol, SYMBOL_POINT);
    int digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
-   double pip = point * ((digits == 3 || digits == 5) ? 10 : 1);
+   double pip = point * PipToPoint();
    
    //--- Calculate SL and TP
    double sl = NormalizeDouble(bid + StopLossPips * pip, digits);
@@ -467,6 +490,13 @@ void OpenSellTrade()
    
    //--- Calculate lot size
    double lot = CalculateLotSize();
+   
+   //--- Validate lot size
+   if(lot <= 0)
+   {
+      Print("SELL order cancelled: Invalid lot size calculated (", lot, ")");
+      return;
+   }
    
    //--- Prepare trade request
    MqlTradeRequest request = {};
@@ -482,7 +512,7 @@ void OpenSellTrade()
    request.deviation = 10;
    request.magic = MagicNumber;
    request.comment = TradeComment;
-   request.type_filling = ORDER_FILLING_FOK;
+   request.type_filling = GetFillingMode();
    
    //--- Send order
    if(!OrderSend(request, result))
