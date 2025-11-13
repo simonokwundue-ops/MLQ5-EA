@@ -1,0 +1,30 @@
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
+# MetaTrader 5 compiled files
+*.ex5
+*.ex4
+
+# MetaTrader 5 backtest files
+*.tst
+*.hst
+*.fxt
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
