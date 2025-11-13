@@ -23,9 +23,11 @@
 ### ✅ Financial Safety
 - **Lot Size Limits**: Enforced minimum and maximum lot sizes
 - **Lot Normalization**: Sizes adjusted to broker specifications
+- **Lot Validation**: Validates calculated lot size before order placement
 - **Spread Filter**: Prevents trading during high spread conditions
 - **Risk Control**: Maximum 10% risk per trade (configurable)
 - **Balance Protection**: Position sizing based on account balance
+- **Dynamic Pip Handling**: Correctly handles 3, 4, and 5 digit broker configurations
 
 ### ✅ Trading Safety
 - **One Position at a Time**: Prevents over-trading
@@ -33,6 +35,8 @@
 - **Mandatory SL/TP**: Every trade has stop loss and take profit
 - **Trading Permissions**: Checks terminal and MQL trade permissions
 - **Spread Validation**: Won't trade if spread exceeds maximum
+- **Dynamic Filling Mode**: Automatically uses broker-supported order filling type (FOK/IOC/RETURN)
+- **Broker Compatibility**: Works with all broker digit configurations
 
 ## Code Quality Analysis
 
@@ -93,7 +97,8 @@
 - **Single Position**: Maintains discipline and simplicity
 - **Fixed SL/TP**: Simplifies risk management
 - **New Bar Only**: Prevents over-trading and multiple signals
-- **FOK Filling**: Uses Fill or Kill order type (may need adjustment for some brokers)
+- **Dynamic Filling**: Automatically selects best order filling mode (FOK, IOC, or RETURN) based on broker support
+- **Universal Pip Handling**: Works correctly with 3, 4, and 5 digit brokers through dynamic pip-to-point conversion
 
 ## Compliance
 
@@ -118,10 +123,17 @@ The EA implements industry-standard security practices:
 - Proper input validation
 - Memory safety measures
 - Comprehensive error handling
-- Financial risk controls
+- Financial risk controls (including lot size validation)
 - Safe trading practices
+- Dynamic broker compatibility (all digit configurations)
+- Flexible order execution (broker-specific filling modes)
 
-**No Security Vulnerabilities Detected**
+**Recent Security Enhancements (v1.01):**
+- Added lot size validation before order placement
+- Implemented dynamic order filling mode detection
+- Fixed pip-to-point conversion for universal broker compatibility
+
+**No Critical Security Vulnerabilities Detected**
 
 ## Recommendations for Users
 
