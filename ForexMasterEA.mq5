@@ -229,13 +229,25 @@ bool UpdateIndicators()
 }
 
 //+------------------------------------------------------------------+
+//| Helper: Convert pips to points for current symbol                |
+//+------------------------------------------------------------------+
+double PipToPoint()
+{
+   int digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
+   if(digits == 3 || digits == 5)
+      return 10.0;
+   else
+      return 1.0;
+}
+
+//+------------------------------------------------------------------+
 //| Check general trading conditions                                 |
 //+------------------------------------------------------------------+
 bool CheckTradingConditions()
 {
    //--- Check spread
    double spread = (double)(SymbolInfoInteger(_Symbol, SYMBOL_SPREAD));
-   if(spread > MaxSpreadPips * 10)  // Convert pips to points
+   if(spread > MaxSpreadPips * PipToPoint())  // Convert pips to points
    {
       return false;
    }
