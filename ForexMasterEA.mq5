@@ -459,10 +459,11 @@ void OpenSellTrade()
    double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
    double point = SymbolInfoDouble(_Symbol, SYMBOL_POINT);
    int digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
+   double pip = point * ((digits == 3 || digits == 5) ? 10 : 1);
    
    //--- Calculate SL and TP
-   double sl = NormalizeDouble(bid + StopLossPips * 10 * point, digits);
-   double tp = NormalizeDouble(bid - TakeProfitPips * 10 * point, digits);
+   double sl = NormalizeDouble(bid + StopLossPips * pip, digits);
+   double tp = NormalizeDouble(bid - TakeProfitPips * pip, digits);
    
    //--- Calculate lot size
    double lot = CalculateLotSize();
